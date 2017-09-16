@@ -1,5 +1,6 @@
 import discord
 import json
+from PythonGists import PythonGists
 from discord.ext import commands
 
 '''Module to count emojis of every server you are a part of.'''
@@ -18,6 +19,7 @@ class EmojiCount:
     @commands.command(pass_context=True, aliases=["emojicount"])
     async def emotecount(self, ctx):
         """Lists information on the module and links to the module"""
+        large_msg = False
         msg = ""
         totalecount = 0
         for g in self.bot.guilds:
@@ -27,6 +29,9 @@ class EmojiCount:
                 totalecount = totalecount + 1
             msg = msg + (g.name + ": " + str(ecount)) + "\n"
         await ctx.message.delete()
+        if len(msg) > 19:
+            msg = PythonGists.Gist(description='Emoji Count for ' + ctx.message.author.name, content=msg, name='emoji.txt')
+            large_msg = True
         color = None
         with open('settings/optional_config.json', 'r+') as fp:
             opt = json.load(fp)
@@ -41,7 +46,10 @@ class EmojiCount:
             embed = discord.Embed(title="Emoji count for " + ctx.message.author.name, color = int(color, 16))
         else:
             embed = discord.Embed(title="Emoji count for " + ctx.message.author.name)
-        embed.add_field(name="Individual Server Emote Count", value=msg, inline = False)
+        if large_msg:
+            embed.add_field(name="Individual Server Emote Count", value="[Gist of Server Emote Count]("+msg+")", inline = False)
+        else:
+            embed.add_field(name="Individual Server Emote Count", value=msg, inline = False)
         embed.add_field(name="Total Emote Count", value=str(totalecount), inline = False)
         await ctx.send(embed=embed)
 
