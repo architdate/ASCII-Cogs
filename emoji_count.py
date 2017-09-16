@@ -29,7 +29,7 @@ class EmojiCount:
                 totalecount = totalecount + 1
             msg = msg + (g.name + ": " + str(ecount)) + "\n"
         await ctx.message.delete()
-        if len(msg) > 19:
+        if len(msg) > 1900:
             msg = PythonGists.Gist(description='Emoji Count for ' + ctx.message.author.name, content=msg, name='emoji.txt')
             large_msg = True
         color = None
